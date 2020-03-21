@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,6 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText mEmailEt,mPasswordEt;
     Button mRegisterBtn;
+    TextView mHaveAccountTV;
 
     //progress bar to display while registring user
     ProgressDialog progressDialog;
@@ -47,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailEt = findViewById(R.id.emailEt);
         mPasswordEt = findViewById(R.id.PasswordEt);
         mRegisterBtn = findViewById(R.id.registerBtn);
+        mHaveAccountTV = findViewById(R.id.have_accountTV);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -79,6 +82,14 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+        //handle login textview click listener
+        mHaveAccountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            }
+        });
+
     }
 
     private void registerUser(String email, String password) {
