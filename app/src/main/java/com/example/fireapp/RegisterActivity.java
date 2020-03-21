@@ -21,6 +21,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -105,6 +109,27 @@ public class RegisterActivity extends AppCompatActivity {
                             // Sign in success, dismiss dialog and start register activity
                             progressDialog.dismiss();
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            String email = user.getEmail();
+                            String uid = user.getUid();
+                            //using HashMap
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            //populate hashMap
+                            hashMap.put("email", email);
+                            hashMap.put("uid", uid);
+                            hashMap.put("name", ""); // will add later
+                            hashMap.put("phone", "");
+                            hashMap.put("image", "");
+
+                            //database instance
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            //database.setPersistenceEnabled(true);
+                            //path to store user data named "Users"
+                            DatabaseReference reference = database.getReference("Users");
+
+                            //put data in hashmap to database
+                            reference.child(uid).setValue(hashMap);
+
                             Toast.makeText(RegisterActivity.this, "Registred \n" + user.getEmail(), Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
                             finish();
