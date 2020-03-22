@@ -11,7 +11,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,7 +130,7 @@ public class RegisterActivity extends AppCompatActivity {
                             reference.child(uid).setValue(hashMap);
 
                             Toast.makeText(RegisterActivity.this, "Registred \n" + user.getEmail(), Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
+                            startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
