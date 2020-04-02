@@ -1,6 +1,7 @@
 package com.example.fireapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fireapp.ChatActivity;
+import com.example.fireapp.ChatListFragment;
 import com.example.fireapp.R;
 import com.example.fireapp.models.ModelUser;
 import com.squareup.picasso.Picasso;
@@ -38,6 +41,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.Holder>{
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         //get data
+        final String hisUID = userList.get(position).getUid();
         String userImage = userList.get(position).getImage();
         String userName = userList.get(position).getName();
         final String userEmail = userList.get(position).getEmail();
@@ -59,7 +63,12 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.Holder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "" + userEmail, Toast.LENGTH_SHORT).show();
+
+                //Click user from list to start messaging activity by putting uid of reciever and identify the user by uid
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("hisUid", hisUID);
+                context.startActivity(intent);
+
             }
         });
     }
