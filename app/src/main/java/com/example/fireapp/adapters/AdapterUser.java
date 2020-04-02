@@ -1,4 +1,4 @@
-package com.example.fireapp;
+package com.example.fireapp.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fireapp.R;
+import com.example.fireapp.models.ModelUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

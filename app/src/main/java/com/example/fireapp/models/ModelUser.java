@@ -1,4 +1,4 @@
-package com.example.fireapp;
+package com.example.fireapp.models;
 
 public class ModelUser {
 
