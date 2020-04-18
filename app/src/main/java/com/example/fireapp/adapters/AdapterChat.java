@@ -1,12 +1,16 @@
 package com.example.fireapp.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,9 +19,16 @@ import com.example.fireapp.R;
 import com.example.fireapp.models.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,7 +62,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyHolder holder, final int position) {
         //get data
         String message = chatList.get(position).getMessage();
         String timeStamp = chatList.get(position).getTimestamp();
@@ -59,7 +70,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
         //convert timestamp
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-       //cal.setTimeInMillis(Long.parseLong(timeStamp));
+    //    cal.setTimeInMillis(Long.parseLong(timeStamp));  //aici il aduce null pe timestamp desi nu e null trebuie investigat
         String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
 
         //set data
@@ -72,6 +83,34 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
         }
 
+        //click to show delete dialog
+        holder.messageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show delete message confirm dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Delete");
+                builder.setMessage("Are you sure ?");
+                //delete button
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteMessage(position);
+                    }
+                });
+                //cancel delete button
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss dialog
+                        dialog.dismiss();
+                    }
+                });
+                //create and show dialog
+                builder.create().show();
+
+            }
+        });
 
         //set seend/delivered status of message
         if (position == chatList.size() - 1){
@@ -85,6 +124,43 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
         }
 
 
+    }
+
+    private void deleteMessage(int position) {
+        final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        /* get time of clicked message and compare it with time of all messages and where values match deleteit */
+        String msgTimeStamp = chatList.get(position).getTimestamp();
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+        Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    //if we want to allow only the sender to delete compare the uid of who is deleting with sender uid
+
+                    if(ds.child("sender").getValue().equals(myUid)){
+                    //doar sterg
+                      //  ds.getRef().removeValue();
+
+                        //we can display message was removed instead
+                    HashMap<String ,Object> hashMap = new HashMap<>();
+                    hashMap.put("message", "Message is deleted");
+                    ds.getRef().updateChildren(hashMap);
+                        Toast.makeText(context, "message deleted...", Toast.LENGTH_SHORT).show();
+                    } else{
+
+                        Toast.makeText(context, "You can delete only your own messages...", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -109,6 +185,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
         //views
         ImageView profileIV;
         TextView messageTV, timeTV, isSeenTV;
+        LinearLayout messageLayout;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -118,6 +195,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
             messageTV = itemView.findViewById(R.id.messageTV);
             timeTV = itemView.findViewById(R.id.timeTV);
             isSeenTV = itemView.findViewById(R.id.isSeenTV);
+            messageLayout = itemView.findViewById(R.id.messageLayout);
 
         }
     }
