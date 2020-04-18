@@ -118,7 +118,7 @@ public class ChatActivity extends AppCompatActivity {
                     }else {
                         //convert timestamp
                         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-                        //cal.setTimeInMillis(Long.parseLong(timeStamp));
+                        cal.setTimeInMillis(Long.parseLong(onlineStatus));
                         String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
                         userStatusTv.setText("Last Seen: " + dateTime);
                     }
