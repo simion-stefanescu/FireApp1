@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -110,18 +112,26 @@ public class ChatActivity extends AppCompatActivity {
                     //get data
                     String name ="" +  ds.child("name").getValue();
                     hisImage ="" +  ds.child("image").getValue();
+                    String typingStatus = "" +  ds.child("typingTo").getValue();
 
-                    //get value of onlinestatus
-                    String onlineStatus = "" + ds.child("onlineStatus").getValue();
-                    if(onlineStatus.equals("online")){
-                        userStatusTv.setText(onlineStatus);
-                    }else {
-                        //convert timestamp
-                        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-                        cal.setTimeInMillis(Long.parseLong(onlineStatus));
-                        String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
-                        userStatusTv.setText("Last Seen: " + dateTime);
+                    //check typing status
+                    if(typingStatus.equals(myUid)){
+                        userStatusTv.setText("typing...");
                     }
+                    else {
+                        //get value of onlinestatus
+                        String onlineStatus = "" + ds.child("onlineStatus").getValue();
+                        if(onlineStatus.equals("online")){
+                            userStatusTv.setText(onlineStatus);
+                        }else {
+                            //convert timestamp
+                            Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+                            cal.setTimeInMillis(Long.parseLong(onlineStatus));
+                            String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
+                            userStatusTv.setText("Last Seen: " + dateTime);
+                        }
+                    }
+
                     //set data
                     nameTv.setText(name);
                     try {
@@ -160,6 +170,28 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        //check edit text change listener
+        messageEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().trim().length() == 0){
+                    checkTypingStatus("noOne");
+                } else {
+                    checkTypingStatus(hisUid); //uid of receiver
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         readMessages();
         seenMessage();
 
@@ -171,6 +203,7 @@ public class ChatActivity extends AppCompatActivity {
         //set ofline with last online timestamp
         String timestamp = String.valueOf(System.currentTimeMillis());
         checkOnlineStatus(timestamp);
+        checkTypingStatus("noOne");
         userRefForSeen.removeEventListener(seenListener);
     }
 
@@ -274,6 +307,14 @@ public class ChatActivity extends AppCompatActivity {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("onlineStatus",status);
+        //update value of onlineStatus of current user
+        dbRef.updateChildren(hashMap);
+    }
+
+    private void checkTypingStatus(String typing){
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo",typing);
         //update value of onlineStatus of current user
         dbRef.updateChildren(hashMap);
     }
