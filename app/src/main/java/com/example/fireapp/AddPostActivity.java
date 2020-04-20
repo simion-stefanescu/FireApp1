@@ -178,7 +178,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pId", timestamp);
                                 hashMap.put("pTitle", title);
                                 hashMap.put("pDescr", description);
-                                hashMap.put("uImage", downloadUri);
+                                hashMap.put("pImage", downloadUri);
                                 hashMap.put("uTime", timestamp);
 
                                 //path to store post data
@@ -228,7 +228,7 @@ public class AddPostActivity extends AppCompatActivity {
                 hashMap.put("pId", timestamp);
                 hashMap.put("pTitle", title);
                 hashMap.put("pDescr", description);
-                hashMap.put("uImage", "noImage");
+                hashMap.put("pImage", "noImage");
                 hashMap.put("uTime", timestamp);
 
                 //path to store post data
