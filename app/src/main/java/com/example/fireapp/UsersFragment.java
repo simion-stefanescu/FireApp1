@@ -3,14 +3,6 @@ package com.example.fireapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.MenuItemCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fireapp.adapters.AdapterUser;
 import com.example.fireapp.models.ModelUser;
@@ -177,6 +176,9 @@ public class UsersFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
+
+        //hide addpost icon from this fragment
+        menu.findItem(R.id.action_add_post).setVisible(false);
 
         //Search View
         MenuItem item = menu.findItem(R.id.action_search);

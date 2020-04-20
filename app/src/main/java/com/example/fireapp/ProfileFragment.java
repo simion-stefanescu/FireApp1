@@ -10,13 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -30,6 +23,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -408,7 +406,7 @@ public class ProfileFragment extends Fragment {
 
                 if(grantResults.length > 0) {
 
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
                     if(writeStorageAccepted){
                         //permission enabled
@@ -580,6 +578,10 @@ public class ProfileFragment extends Fragment {
             firebaseAuth.signOut();
             checkUserStatus();
 
+        }
+
+        if (id == R.id.action_add_post){
+            startActivity(new Intent(getActivity(), AddPostActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

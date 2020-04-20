@@ -3,17 +3,16 @@ package com.example.fireapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -88,6 +87,10 @@ public class HomeFragment extends Fragment {
             firebaseAuth.signOut();
             checkUserStatus();
 
+        }
+
+        if (id == R.id.action_add_post){
+            startActivity(new Intent(getActivity(), AddPostActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
