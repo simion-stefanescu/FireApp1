@@ -1,20 +1,21 @@
 package com.example.fireapp.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fireapp.ChatActivity;
-import com.example.fireapp.ChatListFragment;
 import com.example.fireapp.R;
+import com.example.fireapp.TheProfileActivity;
 import com.example.fireapp.models.ModelUser;
 import com.squareup.picasso.Picasso;
 
@@ -63,11 +64,27 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.Holder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //Click user from list to start messaging activity by putting uid of reciever and identify the user by uid
-                Intent intent = new Intent(context, ChatActivity.class);
-                intent.putExtra("hisUid", hisUID);
-                context.startActivity(intent);
+                //show dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setItems(new String[]{"Profile", "Chat"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == 0){
+                            //profile clicked
+                            Intent intent = new Intent(context, TheProfileActivity.class);
+                            intent.putExtra("uid", hisUID);  //m-a obligat sa fac uid final desi nu trebuia
+                            context.startActivity(intent);
+                        }
+                        if(which == 1){
+                            //chat clicked
+                            //Click user from list to start messaging activity by putting uid of reciever and identify the user by uid
+                            Intent intent = new Intent(context, ChatActivity.class);
+                            intent.putExtra("hisUid", hisUID);
+                            context.startActivity(intent);
+                        }
+                    }
+                });
+                builder.create().show();
 
             }
         });
